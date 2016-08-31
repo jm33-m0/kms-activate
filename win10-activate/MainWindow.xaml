@@ -1,0 +1,14 @@
+﻿<Window x:Class="win10_activate.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:win10_activate"
+        mc:Ignorable="d"
+        Title="Win10-Activator   -- by jm33" Height="150" Width="300"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize">
+    <Grid>
+        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="20" Margin="29,23,0,0" VerticalAlignment="Top" Width="233" Height="64" Click="button_Click"/>
+    </Grid>
+</Window>
