@@ -84,7 +84,7 @@ namespace win10_activate
             makeVol.Start();
 
             // change KMS server
-            startInfo.Arguments = "//B //Nologo slmgr.vbs /skms kms.03k.org";
+            startInfo.Arguments = "//B //Nologo slmgr.vbs /skms kms.jm33.me";
             Process kmsServer = new Process
             {
                 StartInfo = startInfo
