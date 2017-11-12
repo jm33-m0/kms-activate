@@ -16,7 +16,7 @@ namespace win10_activate
             InitializeComponent();
         }
 
-        public bool isAdmin()
+        public bool IsAdmin()
         {
             bool isElevated;
             WindowsIdentity identity = WindowsIdentity.GetCurrent();
@@ -38,7 +38,7 @@ namespace win10_activate
                 }
         }
 
-        public void chk()
+        public void Chk()
         {
             if (IsWindowsActivated())
             {
@@ -50,49 +50,58 @@ namespace win10_activate
             }
         }
 
-        public void kmsActivate()
+        public void KmsActivate()
         {
             // make vol
             System.Diagnostics.Process makeVol = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            
             //startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
             startInfo.FileName = "cmd.exe";
             startInfo.Arguments = "/C slmgr /ipk \"W269N-WFGWX-YVC9B-4J6C9-T83GX\"";
+            
             //startInfo.RedirectStandardOutput = false;
             startInfo.CreateNoWindow = true;
             startInfo.UseShellExecute = true;
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
             makeVol.StartInfo = startInfo;
             makeVol.Start();
+
             // change KMS server
             startInfo.Arguments = "/C slmgr /skms kms.03k.org";
-            Process kmsServer = new Process();
-            kmsServer.StartInfo = startInfo;
+            Process kmsServer = new Process
+            {
+                StartInfo = startInfo
+            };
             kmsServer.Start();
+            
             // apply
             startInfo.Arguments = "/C slmgr /ato";
-            Process activate = new Process();
-            activate.StartInfo = startInfo;
+            Process activate = new Process
+            {
+                StartInfo = startInfo
+            };
             activate.Start();
         }
-        private void button_Click(object sender, RoutedEventArgs e)
+
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!(isAdmin()))
+            if (!(IsAdmin()))
             {
                 MessageBox.Show("You have to perform this action as Admin!", "Privilege escalation required!", MessageBoxButton.OK, MessageBoxImage.Stop);
                 return;
             }
-            MessageBoxResult response = MessageBox.Show("This tools is for Windows 10 Professional only", "Proceed?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult response = MessageBox.Show("This tool is for Windows 10 Professional only", "Proceed?", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (response == MessageBoxResult.No)
             {
                 return;
             }
             button.Content = "Please wait...";
             button.IsEnabled = false;
-            kmsActivate();
+            KmsActivate();
             Thread thread = new Thread(() =>
             {
-                chk();
+                Chk();
             });
             thread.Start();
         }

@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:win10_activate"
         mc:Ignorable="d"
-        Title="Win10-Activator   -- by jm33" Height="150" Width="300"
+        Title="Win10-Activator   -- by jm33_ng" Height="150" Width="300"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="20" Margin="29,23,0,0" VerticalAlignment="Top" Width="233" Height="64" Click="button_Click"/>
+        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="20" Margin="29,23,0,0" VerticalAlignment="Top" Width="233" Height="64" Click="Button_Click"/>
     </Grid>
 </Window>
