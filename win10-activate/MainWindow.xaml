@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:win10_activate"
         mc:Ignorable="d"
-        Title="Win10-Activator   -- by jm33_ng" Height="150" Width="300"
+        Title="win10-activate   -- by jm33_ng" Height="150" Width="300"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid>

@@ -13,6 +13,13 @@ namespace win10_activate
     {
         public MainWindow()
         {
+            // Must be admin
+            if (!(IsAdmin()))
+            {
+                MessageBox.Show("You have to perform this action as Admin!", "Privilege escalation required!", MessageBoxButton.OK, MessageBoxImage.Stop);
+                Application.Current.Shutdown();
+            }
+
             InitializeComponent();
         }
 
@@ -38,37 +45,46 @@ namespace win10_activate
                 }
         }
 
-        public void Chk()
+        public void CheckActivateState()
         {
             if (IsWindowsActivated())
             {
-                MessageBox.Show("Windows 10 has been activated!", "Success!", MessageBoxButton.OK, MessageBoxImage.Information);
+                this.Dispatcher.Invoke(() =>
+                {
+                    button.Content = "Done! Click to exit";
+                    button.IsEnabled = true;
+                });
             }
             else
             {
-                MessageBox.Show("Activation failed!", "Failed!", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("Activation failed!", "Failed!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    button.Content = "Retry";
+                    button.IsEnabled = true;
+                });
             }
         }
 
-        public void KmsActivate()
+        public void KMSActivate()
         {
             // make vol
             System.Diagnostics.Process makeVol = new System.Diagnostics.Process();
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
             {
-
-                FileName = "cmd.exe",
-                Arguments = "/C slmgr /ipk \"W269N-WFGWX-YVC9B-4J6C9-T83GX\"",
+                FileName = "cscript.exe",
+                WorkingDirectory = @"C:\Windows\system32",
+                Arguments = @"//B //Nologo slmgr.vbs /ipk W269N-WFGWX-YVC9B-4J6C9-T83GX",
 
                 CreateNoWindow = true,
-                UseShellExecute = true,
+                UseShellExecute = false,
                 WindowStyle = ProcessWindowStyle.Hidden
             };
             makeVol.StartInfo = startInfo;
             makeVol.Start();
 
             // change KMS server
-            startInfo.Arguments = "/C slmgr /skms kms.03k.org";
+            startInfo.Arguments = "//B //Nologo slmgr.vbs /skms kms.03k.org";
             Process kmsServer = new Process
             {
                 StartInfo = startInfo
@@ -76,7 +92,7 @@ namespace win10_activate
             kmsServer.Start();
             
             // apply
-            startInfo.Arguments = "/C slmgr /ato";
+            startInfo.Arguments = "//B //Nologo slmgr.vbs /ato";
             Process activate = new Process
             {
                 StartInfo = startInfo
@@ -86,24 +102,28 @@ namespace win10_activate
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (!(IsAdmin()))
+            // when to exit
+            if ((string)button.Content == "Done! Click to exit")
             {
-                MessageBox.Show("You have to perform this action as Admin!", "Privilege escalation required!", MessageBoxButton.OK, MessageBoxImage.Stop);
-                return;
+                Application.Current.Shutdown();
             }
+
             MessageBoxResult response = MessageBox.Show("This tool is for Windows 10 Professional only", "Proceed?", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (response == MessageBoxResult.No)
             {
                 return;
             }
+
+            // Try to activate Windows
             button.Content = "Please wait...";
             button.IsEnabled = false;
-            KmsActivate();
-            Thread thread = new Thread(() =>
+            KMSActivate();
+
+            Thread thd = new Thread(() =>
             {
-                Chk();
+                CheckActivateState();
             });
-            thread.Start();
+            thd.Start();
         }
     }
 }
