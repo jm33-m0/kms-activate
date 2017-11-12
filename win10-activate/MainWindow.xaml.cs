@@ -54,16 +54,16 @@ namespace win10_activate
         {
             // make vol
             System.Diagnostics.Process makeVol = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            
-            //startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "/C slmgr /ipk \"W269N-WFGWX-YVC9B-4J6C9-T83GX\"";
-            
-            //startInfo.RedirectStandardOutput = false;
-            startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = true;
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+
+                FileName = "cmd.exe",
+                Arguments = "/C slmgr /ipk \"W269N-WFGWX-YVC9B-4J6C9-T83GX\"",
+
+                CreateNoWindow = true,
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
             makeVol.StartInfo = startInfo;
             makeVol.Start();
 
