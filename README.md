@@ -17,8 +17,13 @@ supported versions
 - Windows Server 2008 R2 Enterprise
 - Office 2010, 2013, 2016 Professional Plus
 
-![](./img/win-activate.jpg)
+NOTE:
 
-![](./img/win-activate-wait.jpg)
+- Your Windows 10 version must be **Professional VL**
+- Download from [here](https://github.com/jm33-m0/win10-activate/releases/download/v0.2.1/win10-activate.exe)
 
-![](./img/win-activate-done.jpg)
+![](/img/win-activate.JPG)
+
+![](/img/win-activate-wait.JPG)
+
+![](/img/win-activate-done.JPG)
