@@ -19,7 +19,7 @@ supported versions
 
 NOTE:
 
-- Your Miscrosoft Windows/Office version must be **Professional VL**
+- Your Miscrosoft Windows/Office version must be **VL(Volume)**
 - Download from [here](https://github.com/jm33-m0/kms-activate/releases)
 
 ![](/img/win-activate.JPG)
