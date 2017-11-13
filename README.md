@@ -19,8 +19,8 @@ supported versions
 
 NOTE:
 
-- Your Windows 10 version must be **Professional VL**
-- Download from [here](https://github.com/jm33-m0/win10-activate/releases/download/v0.2.1/win10-activate.exe)
+- Your Miscrosoft Windows/Office version must be **Professional VL**
+- Download from [here](https://github.com/jm33-m0/kms-activate/releases)
 
 ![](/img/win-activate.JPG)
 
