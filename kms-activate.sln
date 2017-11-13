@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2008
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "win10-activate", "win10-activate\win10-activate.csproj", "{CAB7A67C-3A0D-4CCD-886D-DB372FD2EFE7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "kms-activate", "win10-activate\kms-activate.csproj", "{CAB7A67C-3A0D-4CCD-886D-DB372FD2EFE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {450B1A08-C64B-4E5D-B118-C77C2A06F170}
 	EndGlobalSection
 EndGlobal
