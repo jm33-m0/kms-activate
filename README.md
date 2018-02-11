@@ -21,6 +21,7 @@ NOTE:
 
 - Your Miscrosoft Windows/Office version must be **VL(Volume)**
 - Download from [here](https://github.com/jm33-m0/kms-activate/releases)
+- 中文版本Windows 10会显示激活失败，但系统仍会正常激活
 
 ![](/img/win-activate.JPG)
 
