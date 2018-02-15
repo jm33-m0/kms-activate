@@ -5,12 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:win10_activate"
         mc:Ignorable="d"
-        Title="kms-activate   -- by jm33_ng" Height="150" Width="300"
+        Title="kms-activate   -- by jm33_ng" Height="159.334" Width="300"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="12" Margin="16,45,0,0" VerticalAlignment="Top" Width="258" Height="50" Click="Button_Click" RenderTransformOrigin="0.491,1.127"/>
-        <RadioButton x:Name="choiceWin" Content="Windows VL" HorizontalAlignment="Left" Margin="30,19,0,0" VerticalAlignment="Top" Checked="ChoiceWin_Checked" RenderTransformOrigin="0.47,0.567"/>
-        <RadioButton x:Name="choiceOffice" Content="Office VL" HorizontalAlignment="Left" Margin="188,19,0,0" VerticalAlignment="Top" Checked="ChoiceOffice_Checked"/>
+        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="12" Margin="16,39,0,0" VerticalAlignment="Top" Width="258" Height="50" Click="Button_Click" RenderTransformOrigin="0.491,1.127"/>
     </Grid>
 </Window>

@@ -24,7 +24,6 @@ namespace kms_activate
             }
 
             InitializeComponent();
-            choiceWin.IsChecked = true;
         }
 
         public bool IsAdmin()
@@ -34,25 +33,6 @@ namespace kms_activate
             WindowsPrincipal principal = new WindowsPrincipal(identity);
             isElevated = principal.IsInRole(WindowsBuiltInRole.Administrator);
             return isElevated;
-        }
-
-        public static string GetOfficeDir()
-        {
-            string progRoot = System.Environment.GetEnvironmentVariable("ProgramFiles(x86)");
-            if (!(Directory.Exists(progRoot+@"\Microsoft Office")))
-            {
-                progRoot = System.Environment.GetEnvironmentVariable("ProgramFiles");
-            }
-            string offRoot = progRoot + @"\Microsoft Office\Office";
-            for (int i=16;i>=14;i--)
-            {
-                string offDir = offRoot + i.ToString();
-                if ((Directory.Exists(offDir))) {
-                    return offDir;
-                }
-            }
-
-            return "";
         }
 
         public static bool IsActivated(string choice)
@@ -68,16 +48,10 @@ namespace kms_activate
                 RedirectStandardOutput = true
             };
 
-            Process licenseStatus = new Process();
-
-            // check windows or office?
-            if (choice == "office")
+            Process licenseStatus = new Process
             {
-                procInfo.Arguments = @"//NoLogo ospp.vbs /dstatus";
-                procInfo.WorkingDirectory = GetOfficeDir();
-            }
-
-            licenseStatus.StartInfo = procInfo;
+                StartInfo = procInfo
+            };
             try
             {
                 licenseStatus.Start();
@@ -113,104 +87,18 @@ namespace kms_activate
                     MessageBox.Show("Activation failed!", "Failed!", MessageBoxButton.OK, MessageBoxImage.Error);
                     button.Content = "Retry";
                     button.IsEnabled = true;
-                    choiceWin.IsEnabled = true;
-                    choiceOffice.IsEnabled = true;
                 });
             }
         }
 
         public void KMSActivate()
         {
-            if (choiceOffice.IsChecked == true)
+            Thread win = new Thread(() =>
             {
-                Thread off = new Thread(() =>
-                {
-                    OfficeActivate();
-                    CheckActivateState("office");
-                });
-                off.Start();
-            }
-
-            if (choiceWin.IsChecked == true)
-            {
-                Thread win = new Thread(() =>
-                {
-                    WinActivate();
-                    CheckActivateState("win");
-                });
-                win.Start();
-            }
-        }
-
-        public void OfficeActivate()
-        {
-            // VOL keys
-            Dictionary<int, string> offKeys = new Dictionary<int, string>()
-            {
-                {2016, "XQNVK-8JYDB-WJ9W3-YJ8YR-WFG99"},
-                {2013, "VYBBJ-TRJPB-QFQRF-QFT4D-H3GVB"},
-                {2010, "YC7DK-G2NP3-2QQC3-J6H88-GVGXT"}
-            };
-
-            // check version, only works with Pro Plus versions
-            string key = "";
-            string progRoot = System.Environment.GetEnvironmentVariable("ProgramFiles(x86)");
-            if (!(Directory.Exists(progRoot+@"\Microsoft Office")))
-            {
-                progRoot = System.Environment.GetEnvironmentVariable("ProgramFiles");
-            }
-
-            Dictionary<string, int> offDirs = new Dictionary<string, int>()
-            {
-                {progRoot+@"\Microsoft Office\Office14", 2010},
-                {progRoot+@"\Microsoft Office\Office15", 2013},
-                {progRoot+@"\Microsoft Office\Office16", 2016}
-            };
-
-            try
-            {
-                key = offKeys[offDirs[GetOfficeDir()]];
-            } catch
-            {
-                MessageBox.Show("Could not find supported Office installation", "Error", MessageBoxButton.OK, MessageBoxImage.Stop);
-                return;
-            }
-
-            this.Dispatcher.Invoke(() =>
-            {
-                button.Content = "Activating Office " + offDirs[GetOfficeDir()].ToString() + "...";
+                WinActivate();
+                CheckActivateState("win");
             });
-
-
-            // locate ospp.vbs
-            ProcessStartInfo offProcInfo = new ProcessStartInfo
-            {
-                FileName = "cscript.exe",
-                Arguments = @"//B //NoLogo ospp.vbs /inpkey:" + key,
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = false
-            };
-
-            // make vol
-            Process makeVol = new Process();
-            makeVol.StartInfo = offProcInfo;
-            //makeVol.Start();
-            //makeVol.WaitForExit();
-
-            // change kms server
-            Process kmsServer = new Process();
-            offProcInfo.Arguments = @"//B //NoLogo ospp.vbs /sethst:kms.jm33.me";
-            kmsServer.StartInfo = offProcInfo;
-            kmsServer.Start();
-            kmsServer.WaitForExit();
-
-            // apply
-            offProcInfo.Arguments = @"//B //NoLogo ospp.vbs /act";
-            Process apply = new Process();
-            apply.StartInfo = offProcInfo;
-            apply.Start();
-            apply.WaitForExit();
+            win.Start();
         }
 
         public void WinActivate()
@@ -262,32 +150,36 @@ namespace kms_activate
             {
                 FileName = "cscript.exe",
                 WorkingDirectory = System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32",
-                Arguments = @"//B //Nologo slmgr.vbs /ipk " + key,
+                Arguments = @"//Nologo slmgr.vbs /ipk " + key,
 
                 CreateNoWindow = true,
                 UseShellExecute = false,
+                RedirectStandardOutput = true,
                 WindowStyle = ProcessWindowStyle.Hidden
             };
             makeVol.StartInfo = startInfo;
             makeVol.Start();
+            MessageBox.Show(makeVol.StandardOutput.ReadToEnd(), "makeVol", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             makeVol.WaitForExit();
 
             // change KMS server
-            startInfo.Arguments = "//B //Nologo slmgr.vbs /skms kms.jm33.me";
+            startInfo.Arguments = "//Nologo slmgr.vbs /skms kms.jm33.me";
             Process kmsServer = new Process
             {
                 StartInfo = startInfo
             };
             kmsServer.Start();
+            MessageBox.Show(kmsServer.StandardOutput.ReadToEnd(), "kmsServer", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             kmsServer.WaitForExit();
             
             // apply
-            startInfo.Arguments = "//B //Nologo slmgr.vbs /ato";
+            startInfo.Arguments = "//Nologo slmgr.vbs /ato";
             Process activate = new Process
             {
                 StartInfo = startInfo
             };
             activate.Start();
+            MessageBox.Show(activate.StandardOutput.ReadToEnd(), "activate", MessageBoxButton.OK, MessageBoxImage.Asterisk);
             activate.WaitForExit();
         }
 
@@ -308,22 +200,9 @@ namespace kms_activate
             // Try to activate
             button.Content = "Please wait...";
             button.IsEnabled = false;
-            choiceOffice.IsEnabled = false;
-            choiceWin.IsEnabled = false;
             KMSActivate();
         }
 
-        private void ChoiceWin_Checked(object sender, RoutedEventArgs e)
-        {
-            // check Windows version
-            string productName = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
-            button.Content = "Activate " + productName;
-        }
-
-        private void ChoiceOffice_Checked(object sender, RoutedEventArgs e)
-        {
-            // check Office version
-            button.Content = "Activate Office Professional Plus";
-        }
+        private void Logbox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {}
     }
 }
