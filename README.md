@@ -24,7 +24,3 @@ NOTE:
 - 中文版本Windows 10会显示激活失败，但系统仍会正常激活
 
 ![](/img/win-activate.JPG)
-
-![](/img/win-activate-wait.JPG)
-
-![](/img/win-activate-done.JPG)
