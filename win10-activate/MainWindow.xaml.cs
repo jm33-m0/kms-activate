@@ -25,7 +25,7 @@ namespace kms_activate
 
             string winVersion = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
             InitializeComponent();
-            button.Content = "Activation " + winVersion;
+            button.Content = "Activate " + winVersion;
         }
 
         public bool IsAdmin()
