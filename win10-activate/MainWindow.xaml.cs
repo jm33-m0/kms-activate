@@ -23,7 +23,9 @@ namespace kms_activate
                 Application.Current.Shutdown();
             }
 
+            string winVersion = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
             InitializeComponent();
+            button.Content = "Activation " + winVersion;
         }
 
         public bool IsAdmin()
