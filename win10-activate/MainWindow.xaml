@@ -5,10 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:win10_activate"
         mc:Ignorable="d"
-        Title="kms-activate   -- by jm33_ng" Height="159.334" Width="300"
+        Title="kms-activate   -- by jm33_ng" Height="213.334" Width="300"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="12" Margin="16,39,0,0" VerticalAlignment="Top" Width="258" Height="50" Click="Button_Click" RenderTransformOrigin="0.491,1.127"/>
+        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="12" Margin="17,107,0,0" VerticalAlignment="Top" Width="258" Height="50" Click="Button_Click" RenderTransformOrigin="0.491,1.127"/>
+        <TextBox Name="TextBox" HorizontalAlignment="Left" Height="23" Margin="103,17,0,0" TextWrapping="Wrap" Text="kms.jm33.me" VerticalAlignment="Top" Width="172" TextChanged="TextBox_TextChanged"/>
+        <TextBlock HorizontalAlignment="Left" Margin="17,18,0,0" TextWrapping="Wrap" Text="KMS Server:" VerticalAlignment="Top" RenderTransformOrigin="0.203,1.17"/>
+        <CheckBox Name="CheckBox"  Content="Show debug info" HorizontalAlignment="Left" Margin="17,69,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked"/>
     </Grid>
 </Window>

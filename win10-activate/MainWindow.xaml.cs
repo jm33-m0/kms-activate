@@ -55,7 +55,8 @@ namespace kms_activate
             try
             {
                 licenseStatus.Start();
-            } catch
+            }
+            catch
             {
                 return false;
             }
@@ -137,11 +138,15 @@ namespace kms_activate
                         break;
                     }
                 }
-            } catch
+            }
+            catch
             {
                 MessageBox.Show("Windows version not supported", "Sorry", MessageBoxButton.OK, MessageBoxImage.Stop);
                 return;
             }
+
+            // debug info
+            string makeVolDbg, kmsServerDbg, activateDbg;
 
 
             // make vol
@@ -159,19 +164,23 @@ namespace kms_activate
             };
             makeVol.StartInfo = startInfo;
             makeVol.Start();
-            MessageBox.Show(makeVol.StandardOutput.ReadToEnd(), "makeVol", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            makeVolDbg = makeVol.StandardOutput.ReadToEnd();
             makeVol.WaitForExit();
 
             // change KMS server
-            startInfo.Arguments = "//Nologo slmgr.vbs /skms kms.jm33.me";
+            this.Dispatcher.Invoke(() =>
+            {
+                startInfo.Arguments = "//Nologo slmgr.vbs /skms " + TextBox.Text;
+
+            });
             Process kmsServer = new Process
             {
                 StartInfo = startInfo
             };
             kmsServer.Start();
-            MessageBox.Show(kmsServer.StandardOutput.ReadToEnd(), "kmsServer", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            kmsServerDbg = kmsServer.StandardOutput.ReadToEnd();
             kmsServer.WaitForExit();
-            
+
             // apply
             startInfo.Arguments = "//Nologo slmgr.vbs /ato";
             Process activate = new Process
@@ -179,8 +188,20 @@ namespace kms_activate
                 StartInfo = startInfo
             };
             activate.Start();
-            MessageBox.Show(activate.StandardOutput.ReadToEnd(), "activate", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+            activateDbg = activate.StandardOutput.ReadToEnd();
             activate.WaitForExit();
+
+            // display debug info
+            this.Dispatcher.Invoke(() =>
+            {
+                if (CheckBox.IsChecked == true)
+                {
+                    MessageBox.Show(makeVolDbg + "\n" + kmsServerDbg + "\n" + activateDbg,
+                        "Debug",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Asterisk);
+                }
+            });
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -203,6 +224,10 @@ namespace kms_activate
             KMSActivate();
         }
 
-        private void Logbox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {}
+        private void Logbox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) { }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e) { }
+
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) { }
     }
 }
