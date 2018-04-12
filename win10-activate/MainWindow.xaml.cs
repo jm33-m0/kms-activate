@@ -90,6 +90,9 @@ namespace kms_activate
                     MessageBox.Show("Activation failed!", "Failed!", MessageBoxButton.OK, MessageBoxImage.Error);
                     button.Content = "Retry";
                     button.IsEnabled = true;
+                    windows_option.IsEnabled = true;
+                    office_option.IsEnabled = true;
+                    CheckBox.IsEnabled = true;
                 });
             }
         }
@@ -297,12 +300,18 @@ namespace kms_activate
                 {
                     button.Content = "Done! Click to exit";
                     button.IsEnabled = true;
+                    windows_option.IsEnabled = true;
+                    office_option.IsEnabled = true;
+                    CheckBox.IsEnabled = true;
                 }
                 else
                 {
                     MessageBox.Show("Activation failed!", "Failed!", MessageBoxButton.OK, MessageBoxImage.Error);
                     button.Content = "Retry";
                     button.IsEnabled = true;
+                    windows_option.IsEnabled = true;
+                    office_option.IsEnabled = true;
+                    CheckBox.IsEnabled = true;
                 }
             });
         }
@@ -388,14 +397,10 @@ namespace kms_activate
                     officepath = officeBaseKey.OpenSubKey(@"14.0\Word\InstallRoot").GetValue("Path").ToString();
                     button.Content += "Office 2010";
                 }
-                else if (officeBaseKey.OpenSubKey(@"12.0", false) != null)
-                {
-                    officepath = officeBaseKey.OpenSubKey(@"12.0\Word\InstallRoot").GetValue("Path").ToString();
-                    button.Content += "Office 2007";
-                }
                 else
                 {
-                    MessageBox.Show("Could not read Office installation from registry", "Error detecting Office path", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Only works with Office 2010 and/or above", "Unsupported version", MessageBoxButton.OK, MessageBoxImage.Error);
+                    button.Content = "Unsupported version";
                     windows_option.IsChecked = true;
                     return;
                 }
