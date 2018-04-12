@@ -5,13 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:win10_activate"
         mc:Ignorable="d"
-        Title="kms-activate   -- by jm33_ng" Height="213.334" Width="300"
+        Title="kms-activate   -- by jm33_ng" Height="249.189" Width="300"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize">
     <Grid>
-        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="12" Margin="17,107,0,0" VerticalAlignment="Top" Width="258" Height="50" Click="Button_Click" RenderTransformOrigin="0.491,1.127"/>
-        <TextBox Name="TextBox" HorizontalAlignment="Left" Height="23" Margin="103,17,0,0" TextWrapping="Wrap" Text="kms.jm33.me" VerticalAlignment="Top" Width="172" TextChanged="TextBox_TextChanged"/>
+        <Button x:Name="button" Content="Activate!" HorizontalAlignment="Left" FontFamily="Microsoft Yahei UI" FontSize="12" Margin="17,141,0,0" VerticalAlignment="Top" Width="258" Height="50" Click="Button_Click" RenderTransformOrigin="0.491,1.127"/>
+        <TextBox Name="TextBox" HorizontalAlignment="Left" Height="23" Margin="103,17,0,0" TextWrapping="NoWrap" AcceptsReturn="False" Text="kms.jm33.me" VerticalAlignment="Top" Width="172" TextChanged="TextBox_TextChanged"/>
         <TextBlock HorizontalAlignment="Left" Margin="17,18,0,0" TextWrapping="Wrap" Text="KMS Server:" VerticalAlignment="Top" RenderTransformOrigin="0.203,1.17"/>
-        <CheckBox Name="CheckBox"  Content="Show debug info" HorizontalAlignment="Left" Margin="17,69,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked"/>
+        <CheckBox Name="CheckBox"  Content="Show debug info" HorizontalAlignment="Left" Margin="17,107,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked"/>
+        <TextBlock HorizontalAlignment="Left" Margin="17,48,0,0" TextWrapping="Wrap" Text="OSPP.VBS:" VerticalAlignment="Top"/>
+        <TextBox Name="OsppPath" TextWrapping="NoWrap" AcceptsReturn="False" HorizontalAlignment="Left" Height="19" Margin="103,45,0,0" VerticalAlignment="Top" Width="172" TextChanged="TextBox_TextChanged_1"/>
+        <RadioButton Name="windows_option" Content="Windows" HorizontalAlignment="Left" Margin="17,77,0,0" VerticalAlignment="Top" Checked="Windows_option_Checked"/>
+        <RadioButton Name="office_option" Content="Office" HorizontalAlignment="Left" Margin="190,80,0,0" VerticalAlignment="Top" Checked="Office_option_Checked"/>
     </Grid>
 </Window>

@@ -1,11 +1,12 @@
 ﻿using System.Security.Principal;
 using System.Windows;
+using System.Linq;
 using System.Diagnostics;
 using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32;
-
+using System;
 
 namespace kms_activate
 {
@@ -22,10 +23,8 @@ namespace kms_activate
                 MessageBox.Show("You have to perform this action as Admin!", "Privilege escalation required!", MessageBoxButton.OK, MessageBoxImage.Stop);
                 Application.Current.Shutdown();
             }
-
-            string winVersion = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
             InitializeComponent();
-            button.Content = "Activate " + winVersion;
+            windows_option.IsChecked = true;
         }
 
         public bool IsAdmin()
@@ -37,7 +36,7 @@ namespace kms_activate
             return isElevated;
         }
 
-        public static bool IsActivated(string choice)
+        public bool IsActivated(string choice)
         {
             ProcessStartInfo procInfo = new ProcessStartInfo
             {
@@ -49,6 +48,15 @@ namespace kms_activate
                 WindowStyle = ProcessWindowStyle.Hidden,
                 RedirectStandardOutput = true
             };
+
+            //if (choice == "office")
+            //{
+            //    this.Dispatcher.Invoke(() =>
+            //    {
+            //        procInfo.WorkingDirectory = OsppPath.Text;
+            //    });
+            //    procInfo.Arguments = @"//NoLogo ospp.vbs /act";
+            //}
 
             Process licenseStatus = new Process
             {
@@ -65,7 +73,7 @@ namespace kms_activate
 
             string status = licenseStatus.StandardOutput.ReadToEnd().ToLower();
 
-            if (status.Contains("license status: licensed"))
+            if (status.Contains("license status: licensed") || status.Contains("已授权"))
             {
                 return true;
             }
@@ -96,12 +104,24 @@ namespace kms_activate
 
         public void KMSActivate()
         {
-            Thread win = new Thread(() =>
+            if (windows_option.IsChecked == true)
             {
-                WinActivate();
-                CheckActivateState("win");
-            });
-            win.Start();
+                Thread win = new Thread(() =>
+                {
+                    WinActivate();
+                    CheckActivateState("win");
+                });
+                win.Start();
+            }
+            else if (office_option.IsChecked == true)
+            {
+                Thread office = new Thread(() =>
+                {
+                    OfficeActivate();
+                    CheckActivateState("office");
+                });
+                office.Start();
+            }
         }
 
         public void WinActivate()
@@ -206,6 +226,79 @@ namespace kms_activate
             });
         }
 
+        public void OfficeActivate()
+        {
+            // debug info
+            string kmsServerDbg, activateDbg;
+
+
+            // make vol
+            Process makeVol = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "cscript.exe",
+                WorkingDirectory = @"C:\",
+                Arguments = @"//Nologo ospp.vbs /sethst:kms.jm33.me",
+
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+
+            // change KMS server
+            this.Dispatcher.Invoke(() =>
+            {
+                startInfo.WorkingDirectory = OsppPath.Text;
+                startInfo.Arguments = "//Nologo ospp.vbs /sethst:" + TextBox.Text;
+            });
+            Process kmsServer = new Process
+            {
+                StartInfo = startInfo
+            };
+            kmsServer.Start();
+            kmsServerDbg = kmsServer.StandardOutput.ReadToEnd();
+            kmsServer.WaitForExit();
+
+            // apply
+            startInfo.Arguments = "//Nologo ospp.vbs /act";
+            Process activate = new Process
+            {
+                StartInfo = startInfo
+            };
+            activate.Start();
+            activateDbg = activate.StandardOutput.ReadToEnd();
+            activate.WaitForExit();
+
+            // display debug info
+            this.Dispatcher.Invoke(() =>
+            {
+                if (CheckBox.IsChecked == true)
+                {
+                    MessageBox.Show(kmsServerDbg + "\n" + activateDbg,
+                        "Debug",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Asterisk);
+                }
+            });
+
+            // Check Office activation
+            this.Dispatcher.Invoke(() =>
+            {
+                if (activateDbg.Contains("activation successful"))
+                {
+                    button.Content = "Done! Click to exit";
+                    button.IsEnabled = true;
+                }
+                else
+                {
+                    MessageBox.Show("Activation failed!", "Failed!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    button.Content = "Retry";
+                    button.IsEnabled = true;
+                }
+            });
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             // when to exit
@@ -220,16 +313,80 @@ namespace kms_activate
                 return;
             }
 
-            // Try to activate
+            // Disable all buttons
             button.Content = "Please wait...";
             button.IsEnabled = false;
+            windows_option.IsEnabled = false;
+            office_option.IsEnabled = false;
+            CheckBox.IsEnabled = false;
+
+            // Try to activate
             KMSActivate();
         }
 
-        private void Logbox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) { }
+        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
 
-        private void CheckBox_Checked(object sender, RoutedEventArgs e) { }
+        }
 
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) { }
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged_1(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+
+        }
+
+        private void Windows_option_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                string winVersion = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
+                button.Content = "Activate " + winVersion;
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.ToString(), "Error detecting Windows version", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Office_option_Checked(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                RegistryKey localKey;
+                if (Environment.Is64BitOperatingSystem)
+                    localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                else
+                    localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+
+                string officepath = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Office\16.0\Word\InstallRoot").GetValue("Path").ToString();
+                OsppPath.Text = officepath;
+                string[] tmp_array = officepath.Split('\\');
+                string office_ver = tmp_array[tmp_array.Count() - 2];
+                button.Content = "Activate ";
+                switch (office_ver)
+                {
+                    case "Office16":
+                        button.Content += "Office 2016";
+                        break;
+                    case "Office14":
+                        button.Content += "Office 2010";
+                        break;
+                    case "Office12":
+                        button.Content += "Office 2007";
+                        break;
+                    default:
+                        button.Content += "Unsupported Version";
+                        break;
+                }
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.ToString(), "Error detecting Office path", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
     }
 }
