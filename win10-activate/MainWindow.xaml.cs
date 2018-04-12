@@ -49,15 +49,6 @@ namespace kms_activate
                 RedirectStandardOutput = true
             };
 
-            //if (choice == "office")
-            //{
-            //    this.Dispatcher.Invoke(() =>
-            //    {
-            //        procInfo.WorkingDirectory = OsppPath.Text;
-            //    });
-            //    procInfo.Arguments = @"//NoLogo ospp.vbs /act";
-            //}
-
             Process licenseStatus = new Process
             {
                 StartInfo = procInfo
@@ -66,8 +57,9 @@ namespace kms_activate
             {
                 licenseStatus.Start();
             }
-            catch
+            catch (Exception err)
             {
+                MessageBox.Show(err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
                 return false;
             }
 
@@ -185,7 +177,15 @@ namespace kms_activate
                 WindowStyle = ProcessWindowStyle.Hidden
             };
             makeVol.StartInfo = startInfo;
-            makeVol.Start();
+            try
+            {
+                makeVol.Start();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             makeVolDbg = makeVol.StandardOutput.ReadToEnd();
             makeVol.WaitForExit();
 
@@ -256,7 +256,15 @@ namespace kms_activate
             {
                 StartInfo = startInfo
             };
-            kmsServer.Start();
+            try
+            {
+                kmsServer.Start();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
             kmsServerDbg = kmsServer.StandardOutput.ReadToEnd();
             kmsServer.WaitForExit();
 
@@ -356,32 +364,42 @@ namespace kms_activate
         {
             try
             {
+                button.Content = "Activate ";
                 RegistryKey localKey;
                 if (Environment.Is64BitOperatingSystem)
                     localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
                 else
                     localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
 
-                string officepath = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Office\16.0\Word\InstallRoot").GetValue("Path").ToString();
-                OsppPath.Text = officepath;
-                string[] tmp_array = officepath.Split('\\');
-                string office_ver = tmp_array[tmp_array.Count() - 2];
-                button.Content = "Activate ";
-                switch (office_ver)
+                string officepath = "";
+                RegistryKey officeBaseKey = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Office");
+                if (officeBaseKey.OpenSubKey(@"16.0", false) != null)
                 {
-                    case "Office16":
-                        button.Content += "Office 2016";
-                        break;
-                    case "Office14":
-                        button.Content += "Office 2010";
-                        break;
-                    case "Office12":
-                        button.Content += "Office 2007";
-                        break;
-                    default:
-                        button.Content += "Unsupported Version";
-                        break;
+                    officepath = officeBaseKey.OpenSubKey(@"16.0\Word\InstallRoot").GetValue("Path").ToString();
+                    button.Content += "Office 2016";
                 }
+                else if (officeBaseKey.OpenSubKey(@"15.0", false) != null)
+                {
+                    officepath = officeBaseKey.OpenSubKey(@"15.0\Word\InstallRoot").GetValue("Path").ToString();
+                    button.Content += "Office 2013";
+                }
+                else if (officeBaseKey.OpenSubKey(@"14.0", false) != null)
+                {
+                    officepath = officeBaseKey.OpenSubKey(@"14.0\Word\InstallRoot").GetValue("Path").ToString();
+                    button.Content += "Office 2010";
+                }
+                else if (officeBaseKey.OpenSubKey(@"12.0", false) != null)
+                {
+                    officepath = officeBaseKey.OpenSubKey(@"12.0\Word\InstallRoot").GetValue("Path").ToString();
+                    button.Content += "Office 2007";
+                }
+                else
+                {
+                    MessageBox.Show("Could not read Office installation from registry", "Error detecting Office path", MessageBoxButton.OK, MessageBoxImage.Error);
+                    windows_option.IsChecked = true;
+                    return;
+                }
+                OsppPath.Text = officepath;
             }
             catch (Exception err)
             {
