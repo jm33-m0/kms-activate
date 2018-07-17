@@ -1,6 +1,8 @@
 # kms-activate
 Microsoft Windows/Office 一键激活工具，基于kms.jm33.me的KMS服务器
 
+> in case this repo (or even my account) is blocked, please contact me via Telegram if you need the binary
+
 supported versions
 
 - Windows 10 Professional
