@@ -22,6 +22,7 @@ supported versions
 NOTE:
 
 - **Change KMS server** if activation keeps failing
+- Make sure kms server is reachable, and is present in your slmgr.vbs
 - Tested on Windows 10 Vol and/or Windows 10 Download Tool edition, it should work in most cases
 - Office 2016 Vol is recommended
 - Download from [here](https://github.com/jm33-m0/kms-activate/releases)
