@@ -22,7 +22,8 @@ supported versions
 NOTE:
 
 - **Change KMS server** if activation keeps failing
-- Your Miscrosoft Windows/Office version must be **VL(Volume)**
+- Tested on Windows 10 Vol and/or Windows 10 Download Tool edition, it should work in most cases
+- Office 2016 Vol is recommended
 - Download from [here](https://github.com/jm33-m0/kms-activate/releases)
 
 ![](/img/win-activate.JPG)
