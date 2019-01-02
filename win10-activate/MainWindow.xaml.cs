@@ -1,12 +1,10 @@
-﻿using System.Security.Principal;
-using System.Windows;
-using System.Linq;
-using System.Diagnostics;
-using System.Threading;
-using System.IO;
-using System.Collections.Generic;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Security.Principal;
+using System.Threading;
+using System.Windows;
 
 namespace kms_activate
 {
@@ -141,6 +139,14 @@ namespace kms_activate
             // which version to activate?
             string key = "";
             string productName = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
+            if (productName.ToLower().Contains("ultimate"))
+            // in case you want to activate Windows 7 Ultimate (it's a retail version, which doesn't support VOL at all)
+            {
+                MessageBox.Show("Not supported", "Error", MessageBoxButton.OK, MessageBoxImage.Stop);
+                return;
+            }
+
+
             try
             {
                 foreach (string winversion in winKeys.Keys)
@@ -324,10 +330,14 @@ namespace kms_activate
                 Application.Current.Shutdown();
             }
 
-            MessageBoxResult response = MessageBox.Show("Make sure you are using VOL version", "Proceed?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (response == MessageBoxResult.No)
+            if (office_option.IsChecked.Value)
+            // Office has to be vol
             {
-                return;
+                MessageBoxResult response = MessageBox.Show("Make sure you are using VOL version", "Proceed?", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (response == MessageBoxResult.No)
+                {
+                    return;
+                }
             }
 
             // Disable all buttons
@@ -371,21 +381,38 @@ namespace kms_activate
 
         private void Office_option_Checked(object sender, RoutedEventArgs e)
         {
+            // look for Office's install path, where OSPP.VBS can be found
             try
             {
                 button.Content = "Activate ";
                 RegistryKey localKey;
                 if (Environment.Is64BitOperatingSystem)
+                {
                     localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                }
                 else
+                {
                     localKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                }
 
                 string officepath = "";
                 RegistryKey officeBaseKey = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Office");
                 if (officeBaseKey.OpenSubKey(@"16.0", false) != null)
                 {
                     officepath = officeBaseKey.OpenSubKey(@"16.0\Word\InstallRoot").GetValue("Path").ToString();
-                    button.Content += "Office 2016";
+
+                    if (officepath.Contains("root"))
+                    // Office 2019 can only be installed via Click-To-Run, therefore we get "C:\Program Files\Microsoft Office\root\Office16\",
+                    // otherwise we get "C:\Program Files\Microsoft Office\Office16\"
+                    {
+                        // OSPP.VBS is still in "C:\Program Files\Microsoft Office\Office16\"
+                        officepath = officepath.Replace("root", "");
+                        button.Content += "Office 2019/2016";
+                    }
+                    else
+                    {
+                        button.Content += "Office 2016";
+                    }
                 }
                 else if (officeBaseKey.OpenSubKey(@"15.0", false) != null)
                 {
