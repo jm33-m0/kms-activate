@@ -34,34 +34,9 @@ namespace kms_activate
             return isElevated;
         }
 
-        public bool IsActivated(string choice)
+        public bool IsActivated()
         {
-            ProcessStartInfo procInfo = new ProcessStartInfo
-            {
-                FileName = "cscript.exe",
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                WorkingDirectory = System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32",
-                Arguments = @"//NoLogo slmgr.vbs /dli",
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true
-            };
-
-            Process licenseStatus = new Process
-            {
-                StartInfo = procInfo
-            };
-            try
-            {
-                licenseStatus.Start();
-            }
-            catch (Exception err)
-            {
-                MessageBox.Show(err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
-                return false;
-            }
-
-            string status = licenseStatus.StandardOutput.ReadToEnd().ToLower();
+            string status = RunProcess("cscript.exe", @"//NoLogo slmgr.vbs /dli");
 
             if (status.Contains("license status: licensed") || status.Contains("已授权"))
             {
@@ -71,9 +46,40 @@ namespace kms_activate
             return false;
         }
 
-        public void CheckActivateState(string choice)
+        public string RunProcess(string name, string args)
         {
-            if (IsActivated(choice))
+            ProcessStartInfo procInfo = new ProcessStartInfo
+            {
+                FileName = name,
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                WorkingDirectory = System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32",
+                Arguments = args,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardOutput = true
+            };
+
+            Process proc = new Process
+            {
+                StartInfo = procInfo
+            };
+            try
+            {
+                proc.Start();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show(err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
+                return "";
+            }
+
+            string output = proc.StandardOutput.ReadToEnd().ToLower();
+            return output;
+        }
+
+        public void CheckActivateState()
+        {
+            if (IsActivated())
             {
                 this.Dispatcher.Invoke(() =>
                 {
@@ -90,7 +96,7 @@ namespace kms_activate
                     button.IsEnabled = true;
                     windows_option.IsEnabled = true;
                     office_option.IsEnabled = true;
-                    CheckBox.IsEnabled = true;
+                    ShowDebug.IsEnabled = true;
                 });
             }
         }
@@ -102,7 +108,7 @@ namespace kms_activate
                 Thread win = new Thread(() =>
                 {
                     WinActivate();
-                    CheckActivateState("win");
+                    CheckActivateState();
                 });
                 win.Start();
             }
@@ -111,7 +117,6 @@ namespace kms_activate
                 Thread office = new Thread(() =>
                 {
                     OfficeActivate();
-                    CheckActivateState("office");
                 });
                 office.Start();
             }
@@ -147,6 +152,21 @@ namespace kms_activate
                 if (winversion.Contains(productName) || productName.Contains(winversion))
                 {
                     key = winKeys[winversion];
+                    if (productName.ToLower().Contains("evaluation"))
+                    {
+                        string edition = winversion.Split(' ')[winversion.Split(' ').Length - 1];
+                        string args = "/online /set-edition:Server" + edition + " /productkey:" + key + " /accepteula";
+                        string eval2license = RunProcess("dism.exe", args);
+                        if (eval2license == "")
+                        {
+                            MessageBox.Show("Evaluation version failed to be converted", "Sorry", MessageBoxButton.OK, MessageBoxImage.Stop);
+                            Application.Current.Shutdown();
+                        }
+                        MessageBox.Show("To upgrade to licensed version, a reboot is required\n" + args + "\n" + eval2license,
+                            "Note", MessageBoxButton.OK,
+                            MessageBoxImage.Information);
+                        Application.Current.Shutdown();
+                    }
                     this.Dispatcher.Invoke(() =>
                     {
                         button.Content = "Activating " + winversion + "...";
@@ -218,7 +238,7 @@ namespace kms_activate
             // display debug info
             this.Dispatcher.Invoke(() =>
             {
-                if (CheckBox.IsChecked == true)
+                if (ShowDebug.IsChecked == true)
                 {
                     MessageBox.Show(makeVolDbg + "\n" + kmsServerDbg + "\n" + activateDbg,
                         "Debug",
@@ -283,7 +303,7 @@ namespace kms_activate
             // display debug info
             this.Dispatcher.Invoke(() =>
             {
-                if (CheckBox.IsChecked == true)
+                if (ShowDebug.IsChecked == true)
                 {
                     MessageBox.Show(kmsServerDbg + "\n" + activateDbg,
                         "Debug",
@@ -301,7 +321,7 @@ namespace kms_activate
                     button.IsEnabled = true;
                     windows_option.IsEnabled = true;
                     office_option.IsEnabled = true;
-                    CheckBox.IsEnabled = true;
+                    ShowDebug.IsEnabled = true;
                 }
                 else
                 {
@@ -310,7 +330,7 @@ namespace kms_activate
                     button.IsEnabled = true;
                     windows_option.IsEnabled = true;
                     office_option.IsEnabled = true;
-                    CheckBox.IsEnabled = true;
+                    ShowDebug.IsEnabled = true;
                 }
             });
         }
@@ -338,7 +358,7 @@ namespace kms_activate
             button.IsEnabled = false;
             windows_option.IsEnabled = false;
             office_option.IsEnabled = false;
-            CheckBox.IsEnabled = false;
+            ShowDebug.IsEnabled = false;
 
             // Try to activate
             KMSActivate();
