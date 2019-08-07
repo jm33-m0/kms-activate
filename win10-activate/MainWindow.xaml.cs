@@ -128,6 +128,8 @@ namespace kms_activate
                 {"Windows 8.1 Enterprise", "MHF9N-XY6XB-WVXMC-BTDCT-MKKG7" },
                 {"Windows 7 Professional", "FJ82H-XT6CR-J8D7P-XQJJ2-GPDD4" },
                 {"Windows 7 Enterprise", "33PXH-7Y6KF-2VJC9-XBBR8-HVTHH" },
+                {"Windows Server 2019 Standard", "N69G4-B89J2-4G8F4-WWYCC-J464C" },
+                {"Windows Server 2019 Datacenter", "WMDGN-G9PQG-XVVXX-R3X43-63DFG" },
                 {"Windows Server 2016 Standard", "WC2BQ-8NRM3-FDDYY-2BFGV-KHKQY" },
                 {"Windows Server 2016 Datacenter", "CB7KF-BWN84-R7R2Y-793K2-8XDDG" },
                 {"Windows Server 2012 R2 Server Standard", "D2N9P-3P6X9-2R39C-7RTCD-MDVJX" },
@@ -139,33 +141,24 @@ namespace kms_activate
             // which version to activate?
             string key = "";
             string productName = Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion", "ProductName", "").ToString();
-            if (productName.ToLower().Contains("ultimate"))
-            // in case you want to activate Windows 7 Ultimate (it's a retail version, which doesn't support VOL at all)
-            {
-                MessageBox.Show("Not supported", "Error", MessageBoxButton.OK, MessageBoxImage.Stop);
-                return;
-            }
 
-
-            try
+            foreach (string winversion in winKeys.Keys)
             {
-                foreach (string winversion in winKeys.Keys)
+                if (winversion.Contains(productName) || productName.Contains(winversion))
                 {
-                    if (winversion.Contains(productName))
+                    key = winKeys[winversion];
+                    this.Dispatcher.Invoke(() =>
                     {
-                        key = winKeys[winversion];
-                        this.Dispatcher.Invoke(() =>
-                        {
-                            button.Content = "Activating " + winversion + "...";
-                        });
-                        break;
-                    }
+                        button.Content = "Activating " + winversion + "...";
+                    });
+                    break;
                 }
             }
-            catch
+
+            if (key == "")
             {
                 MessageBox.Show("Windows version not supported", "Sorry", MessageBoxButton.OK, MessageBoxImage.Stop);
-                return;
+                Application.Current.Shutdown();
             }
 
             // debug info
