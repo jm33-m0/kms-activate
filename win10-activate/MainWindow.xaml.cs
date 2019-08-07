@@ -36,7 +36,7 @@ namespace kms_activate
 
         public bool IsActivated()
         {
-            string status = RunProcess("cscript.exe", @"//NoLogo slmgr.vbs /dli");
+            string status = RunProcess("cscript.exe", @"//NoLogo slmgr.vbs /dli", true);
 
             if (status.Contains("license status: licensed") || status.Contains("已授权"))
             {
@@ -46,18 +46,21 @@ namespace kms_activate
             return false;
         }
 
-        public string RunProcess(string name, string args)
+        public string RunProcess(string name, string args, bool silent)
         {
             ProcessStartInfo procInfo = new ProcessStartInfo
             {
                 FileName = name,
-                CreateNoWindow = true,
-                UseShellExecute = false,
                 WorkingDirectory = System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32",
                 Arguments = args,
-                WindowStyle = ProcessWindowStyle.Hidden,
-                RedirectStandardOutput = true
             };
+            if (silent)
+            {
+                procInfo.UseShellExecute = false;
+                procInfo.CreateNoWindow = true;
+                procInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                procInfo.RedirectStandardOutput = true;
+            }
 
             Process proc = new Process
             {
@@ -156,7 +159,7 @@ namespace kms_activate
                     {
                         string edition = winversion.Split(' ')[winversion.Split(' ').Length - 1];
                         string args = "/online /set-edition:Server" + edition + " /productkey:" + key + " /accepteula";
-                        string eval2license = RunProcess("dism.exe", args);
+                        string eval2license = RunProcess("dism.exe", args, false);
                         if (eval2license == "")
                         {
                             MessageBox.Show("Evaluation version failed to be converted", "Sorry", MessageBoxButton.OK, MessageBoxImage.Stop);
