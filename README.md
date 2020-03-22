@@ -1,6 +1,17 @@
 # kms-activate
 Microsoft Windows/Office 一键激活工具，基于kms.jm33.me的KMS服务器
 
+## NOTE:
+
+- To use this tool, `kms.jm33.me` or your custom KMS server must be reachable
+- Change KMS server if activation keeps failing
+- Check `Show debug info` to see what happens during the activation process
+- Make sure kms server is reachable, and is present in your slmgr.vbs
+- [Office 2019 Vol](https://github.com/jm33-m0/kms-activate#office-deployment-tool) is recommended
+- Download from [here](https://github.com/jm33-m0/kms-activate/releases)
+
+![screenshot](/img/win-activate.JPG)
+
 ## supported versions
 
 - [Windows 10 Professional/Enterprise](https://www.microsoft.com/en-us/software-download/windows10)
@@ -53,14 +64,3 @@ open a powershell window in current directory
 # install when you have finished downloading
 .\setup.exe /configure office.xml
 ```
-
-## NOTE:
-
-- KMS activation requires a working internet connection, and `kms.jm33.me` or your custom KMS server must be reachable
-- Change KMS server if activation keeps failing
-- Check `Show debug info` to view log
-- Make sure kms server is reachable, and is present in your slmgr.vbs
-- Office 2019 Vol is recommended
-- Download from [here](https://github.com/jm33-m0/kms-activate/releases)
-
-![screenshot](/img/win-activate.JPG)
