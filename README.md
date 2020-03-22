@@ -15,8 +15,8 @@ Microsoft Windows/Office 一键激活工具，基于kms.jm33.me的KMS服务器
 ## supported versions
 
 - [Windows 10 Professional/Enterprise](https://www.microsoft.com/en-us/software-download/windows10)
-- Windows 7, 8.1 Professional/Enterprise (EOL)
 - [Windows Server 2008 R2, 2012 R2, 2016, 2019 Standard/Datacenter](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019?filetype=ISO)
+- ~~Windows 7~~ (EOL), 8.1 Professional/Enterprise
 - [Office 2010, 2013, 2016, 2019](https://github.com/jm33-m0/kms-activate#office-deployment-tool)
 - Visio Pro, Project Pro (included in Office Enterprise)
 
