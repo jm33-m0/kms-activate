@@ -1,10 +1,11 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows;
+
+using Microsoft.Win32;
 
 namespace kms_activate
 {

@@ -9,6 +9,8 @@ Microsoft Windows/Office 一键激活工具，基于kms.jm33.me的KMS服务器
 - Windows 8.1 Enterprise
 - Windows 7 Professional
 - Windows 7 Enterprise
+- Windows Server 2019 Standard
+- Windows Server 2019 Datacenter
 - Windows Server 2016 Standard
 - Windows Server 2016 Datacenter
 - Windows Server 2012 R2 Server Standard
