@@ -12,7 +12,7 @@ Microsoft Windows/Office 一键激活工具，基于kms.jm33.me的KMS服务器
 
 ![screenshot](/img/win-activate.JPG)
 
-## supported versions
+## supported products
 
 - [Windows 10 Professional/Enterprise](https://www.microsoft.com/en-us/software-download/windows10)
 - [Windows Server 2008 R2, 2012 R2, 2016, 2019 Standard/Datacenter](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019?filetype=ISO)
