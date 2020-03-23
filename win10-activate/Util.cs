@@ -20,7 +20,7 @@ namespace kms_activate
 
         public static bool IsActivated()
         {
-            string status = RunProcess("cscript.exe", @"//NoLogo slmgr.vbs /dli", true);
+            string status = RunProcess("cscript.exe", @"//NoLogo slmgr.vbs /dli", "", true);
 
             if (status.Contains("license status: licensed") || status.Contains("已授权"))
             {
@@ -30,7 +30,7 @@ namespace kms_activate
             return false;
         }
 
-        public static string RunProcess(string name, string args, bool silent)
+        public static string RunProcess(string name, string args, string workdir, bool silent)
         {
             ProcessStartInfo procInfo = new ProcessStartInfo
             {
@@ -38,6 +38,10 @@ namespace kms_activate
                 WorkingDirectory = System.Environment.GetEnvironmentVariable("SystemRoot") + @"\System32",
                 Arguments = args,
             };
+            if (workdir != "")
+            {
+                procInfo.WorkingDirectory = workdir;
+            }
             if (silent)
             {
                 procInfo.UseShellExecute = false;

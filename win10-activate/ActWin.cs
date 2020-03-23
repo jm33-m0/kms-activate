@@ -45,7 +45,7 @@ namespace kms_activate
                     {
                         string edition = winversion.Split(' ')[winversion.Split(' ').Length - 1];
                         string args = "/online /set-edition:Server" + edition + " /productkey:" + key + " /accepteula";
-                        string eval2license = Util.RunProcess("dism.exe", args, false);
+                        string eval2license = Util.RunProcess("dism.exe", args, "", false);
                         if (eval2license == "")
                         {
                             MessageBox.Show("Evaluation version failed to be converted", "Sorry", MessageBoxButton.OK, MessageBoxImage.Stop);
