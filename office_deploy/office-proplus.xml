@@ -1,0 +1,31 @@
+<!-- Office 2019 enterprise client configuration file sample. To be used for Office 2019
+     enterprise volume licensed products only, including Office 2019 Professional Plus,
+     Visio 2019, and Project 2019.
+
+     Do not use this sample to install Office 365 products.
+
+     For detailed information regarding configuration options visit: http://aka.ms/ODT.
+     To use the configuration file be sure to remove the comments
+
+     The following sample allows you to download and install Office 2019 Professional Plus,
+     Visio 2019 Professional, and Project 2019 Professional directly from the Office CDN.
+
+ -->
+
+
+
+<Configuration>
+
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2019">
+    <Product ID="ProPlus2019Volume">
+      <Language ID="zh-cn" />
+    </Product>
+  </Add>
+
+  <!--  <RemoveMSI All="True" /> -->
+
+  <!--  <Display Level="None" AcceptEULA="TRUE" />  -->
+
+  <!--  <Property Name="AUTOACTIVATE" Value="1" />  -->
+
+</Configuration>
