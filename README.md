@@ -22,45 +22,6 @@ Microsoft Windows/Office 一键激活工具，基于kms.jm33.me的KMS服务器
 
 ## Office Deployment Tool
 
-you can use [Office Deployment Tool](https://www.microsoft.com/en-us/download/details.aspx?id=49117) to download and install Office (VOL) from Microsoft
+[Office Deployment Tool](https://www.microsoft.com/en-us/download/details.aspx?id=49117): download and install Office (VOL) from Microsoft
 
-### modify configuration XML
-
-upon successful extraction, you will see some XML files under office deployment directory,
-the one we care about is `configuration-Office2019Enterprise.xml`:
-
-```xml
-<Configuration>
-
-  <Add OfficeClientEdition="64" Channel="PerpetualVL2019">
-    <Product ID="ProPlus2019Volume">
-      <Language ID="en-us" />
-    </Product>
-    <Product ID="VisioPro2019Volume">
-      <Language ID="en-us" />
-    </Product>
-    <Product ID="ProjectPro2019Volume">
-      <Language ID="en-us" />
-    </Product>
-  </Add>
-
-  <!--  <RemoveMSI All="True" /> -->
-
-  <!--  <Display Level="None" AcceptEULA="TRUE" />  -->
-
-  <!--  <Property Name="AUTOACTIVATE" Value="1" />  -->
-</Configuration>
-```
-
-comment out the products you don't need, then save a copy as `office.xml`
-
-### how to install
-
-open a powershell window in current directory
-
-```powershell
-# download from Microsoft
-.\setup.exe /download office.xml
-# install when you have finished downloading
-.\setup.exe /configure office.xml
-```
+in `office_deploy` directory, run `install-office.bat`, Office 2019 Pro Plus Vol will be installed automatically
