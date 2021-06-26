@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.Win32;
+
+using System;
 using System.Diagnostics;
 using System.Windows;
-
-using Microsoft.Win32;
 
 namespace kms_activate
 {
@@ -11,11 +11,12 @@ namespace kms_activate
         public static MainWindow mainW = (MainWindow)Application.Current.MainWindow;
         public static void OfficeActivate()
         {
-            // convert to VOL if needed
-            Retail2Vol();
 
             // debug info
             string kmsServerDbg, activateDbg;
+
+            // ospp root
+            string root = "";
 
             // make vol
             Process makeVol = new Process();
@@ -34,9 +35,21 @@ namespace kms_activate
             // change KMS server
             mainW.Dispatcher.Invoke(() =>
             {
+                // convert to VOL if needed
+                root = mainW.OsppPath.Text;
                 startInfo.WorkingDirectory = mainW.OsppPath.Text;
                 startInfo.Arguments = "//Nologo ospp.vbs /sethst:" + mainW.TextBox.Text;
             });
+            if (Util.YesNo("Convert to VOL? This might fail!", "Retail to VOL convertor"))
+            {
+                Retail2Vol(root);
+            }
+
+            if (IsOfficeActivated(root))
+            {
+                return;
+            }
+
             Process kmsServer = new Process
             {
                 StartInfo = startInfo
@@ -73,12 +86,38 @@ namespace kms_activate
                         MessageBoxButton.OK,
                         MessageBoxImage.Asterisk);
                 }
+                IsOfficeActivated(startInfo.WorkingDirectory);
             });
+        }
 
+        public static bool IsOfficeActivated(string root)
+        {
+            // make vol
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "cscript.exe",
+                WorkingDirectory = root,
+                Arguments = @"//Nologo ospp.vbs /dstatus",
+
+                CreateNoWindow = true,
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                WindowStyle = ProcessWindowStyle.Hidden
+            };
+
+            // check license status
+            Process activate = new Process
+            {
+                StartInfo = startInfo
+            };
+            activate.Start();
+            string activateDbg = activate.StandardOutput.ReadToEnd();
+            activate.WaitForExit();
             // Check Office activation
             mainW.Dispatcher.Invoke(() =>
             {
-                if (activateDbg.Contains("activation successful"))
+                if (activateDbg.Contains("activation successful") ||
+                activateDbg.Contains("0xC004F009"))
                 {
                     mainW.button.Content = "Done! Click to exit";
                     mainW.button.IsEnabled = true;
@@ -96,15 +135,15 @@ namespace kms_activate
                     mainW.ShowDebug.IsEnabled = true;
                 }
             });
+            return false;
         }
 
-        public static void Retail2Vol()
+        public static void Retail2Vol(string installRoot)
         /*
          * try to install vol key and licenses
          * product key is of Office Pro Plus
          */
         {
-            string installRoot = mainW.OsppPath.Text;
             string dstatus = Util.RunProcess("cscript.exe", "//NoLogo ospp.vbs /dstatus", installRoot, false);
             if (dstatus.ToLower().Contains("volume"))
             {

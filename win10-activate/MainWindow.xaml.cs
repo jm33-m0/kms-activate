@@ -30,8 +30,7 @@ namespace kms_activate
             if (office_option.IsChecked.Value)
             // Office has to be vol
             {
-                MessageBoxResult response = MessageBox.Show("Make sure you are using VOL version", "Proceed?", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (response == MessageBoxResult.No)
+                if (!Util.YesNo("If you are not using a VOL version, kms-activate will try to convert it", "Proceed?"))
                 {
                     return;
                 }

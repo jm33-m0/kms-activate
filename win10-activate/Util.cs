@@ -30,6 +30,12 @@ namespace kms_activate
             return false;
         }
 
+        public static bool YesNo(string prompt, string title)
+        {
+            MessageBoxResult response = MessageBox.Show(prompt, title, MessageBoxButton.YesNo, MessageBoxImage.Question);
+            return response == MessageBoxResult.Yes;
+        }
+
         public static string RunProcess(string name, string args, string workdir, bool silent)
         {
             ProcessStartInfo procInfo = new ProcessStartInfo
@@ -67,6 +73,7 @@ namespace kms_activate
             string output = proc.StandardOutput.ReadToEnd().ToLower();
             return output;
         }
+
         public static void CheckActivateState()
         {
             if (Util.IsActivated())
