@@ -10,7 +10,7 @@
         ResizeMode="NoResize">
     <Grid>
         <Button x:Name="button" Content="Activate!" HorizontalAlignment="Center" FontFamily="Microsoft Yahei UI" FontSize="12" Margin="37,139,37,10" VerticalAlignment="Top" Width="300" Height="54" Click="Button_Click" RenderTransformOrigin="0.491,1.127"/>
-        <TextBox Name="TextBox" HorizontalAlignment="Left" Height="23" Margin="175,17,0,0" TextWrapping="NoWrap" AcceptsReturn="False" Text="kms.jm33.me" VerticalAlignment="Top" Width="172" TextChanged="TextBox_TextChanged"/>
+        <TextBox Name="TextBox" HorizontalAlignment="Left" Height="23" Margin="175,17,0,0" TextWrapping="NoWrap" AcceptsReturn="False" Text="kms.03k.org" VerticalAlignment="Top" Width="172" TextChanged="TextBox_TextChanged"/>
         <TextBlock HorizontalAlignment="Left" Margin="47,18,0,0" TextWrapping="Wrap" Text="KMS Server:" VerticalAlignment="Top" RenderTransformOrigin="0.203,1.17"/>
         <CheckBox Name="ShowDebug"  Content="Show debug info" HorizontalAlignment="Left" Margin="47,109,0,0" VerticalAlignment="Top" Checked="CheckBox_Checked" Height="17" Width="132"/>
         <TextBlock HorizontalAlignment="Left" Margin="47,48,0,0" TextWrapping="Wrap" Text="OSPP.VBS:" VerticalAlignment="Top"/>
