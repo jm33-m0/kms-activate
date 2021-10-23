@@ -18,13 +18,11 @@ namespace kms_activate
             // ospp root
             string root = "";
 
-            // make vol
-            Process makeVol = new Process();
+            // procinfo
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = "cscript.exe",
                 WorkingDirectory = @"C:\",
-                Arguments = @"//Nologo ospp.vbs /sethst:kms.jm33.me",
 
                 CreateNoWindow = true,
                 UseShellExecute = false,
@@ -35,20 +33,17 @@ namespace kms_activate
             // change KMS server
             mainW.Dispatcher.Invoke(() =>
             {
-                // convert to VOL if needed
                 root = mainW.OsppPath.Text;
                 startInfo.WorkingDirectory = mainW.OsppPath.Text;
                 startInfo.Arguments = "//Nologo ospp.vbs /sethst:" + mainW.TextBox.Text;
             });
-            if (Util.YesNo("Convert to VOL? This might fail!", "Retail to VOL convertor"))
-            {
-                Retail2Vol(root);
-            }
 
             if (IsOfficeActivated(root))
             {
                 return;
             }
+
+            Retail2Vol(root);
 
             Process kmsServer = new Process
             {
@@ -113,11 +108,21 @@ namespace kms_activate
             activate.Start();
             string activateDbg = activate.StandardOutput.ReadToEnd();
             activate.WaitForExit();
+
             // Check Office activation
             mainW.Dispatcher.Invoke(() =>
             {
+                if (mainW.ShowDebug.IsChecked == true)
+                {
+                    MessageBox.Show("Checking if Office is activated:\n" + activateDbg,
+                        "Debug",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Asterisk);
+                }
+
                 if (activateDbg.Contains("activation successful") ||
-                activateDbg.Contains("0xC004F009"))
+                activateDbg.Contains("0xC004F009") ||
+                activateDbg.Contains("LICENSE STATUS:  ---LICENSED---"))
                 {
                     mainW.button.Content = "Done! Click to exit";
                     mainW.button.IsEnabled = true;
@@ -144,12 +149,45 @@ namespace kms_activate
          * product key is of Office Pro Plus
          */
         {
-            string dstatus = Util.RunProcess("cscript.exe", "//NoLogo ospp.vbs /dstatus", installRoot, false);
+            string dstatus;
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = "cscript.exe",
+                    WorkingDirectory = installRoot,
+                    Arguments = @"//Nologo ospp.vbs /dstatus",
+
+                    CreateNoWindow = true,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    WindowStyle = ProcessWindowStyle.Hidden
+                };
+
+                // check license status
+                Process checkLicense = new Process
+                {
+                    StartInfo = startInfo
+                };
+                checkLicense.Start();
+                dstatus = checkLicense.StandardOutput.ReadToEnd();
+                checkLicense.WaitForExit();
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show("Retail2Vol\n" + err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
             if (dstatus.ToLower().Contains("volume"))
             {
                 return;
             }
 
+            if (!Util.YesNo("You are not using a VOL version, try converting?", "Retail2Vol"))
+            {
+                return;
+            }
             string licenseDir = installRoot + @"..\root\License";
             string key, visioKey, version;
 
@@ -186,6 +224,7 @@ namespace kms_activate
             }
             else
             {
+                MessageBox.Show("No compatible Office version found, exit?", "Goodbye", MessageBoxButton.OK, MessageBoxImage.Stop);
                 return;
             }
 

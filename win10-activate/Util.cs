@@ -66,11 +66,12 @@ namespace kms_activate
             }
             catch (Exception err)
             {
-                MessageBox.Show(err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("RunProcess\n" + err.ToString(), "Exception caught", MessageBoxButton.OK, MessageBoxImage.Error);
                 return "";
             }
 
             string output = proc.StandardOutput.ReadToEnd().ToLower();
+            proc.WaitForExit();
             return output;
         }
 
