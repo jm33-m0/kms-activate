@@ -27,15 +27,6 @@ namespace kms_activate
                 Application.Current.Shutdown();
             }
 
-            if (office_option.IsChecked.Value)
-            // Office has to be vol
-            {
-                if (!Util.YesNo("If you are not using a VOL version, kms-activate will try to convert it", "Proceed?"))
-                {
-                    return;
-                }
-            }
-
             // Disable all buttons
             button.Content = "Please wait...";
             button.IsEnabled = false;
