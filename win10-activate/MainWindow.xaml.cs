@@ -17,12 +17,13 @@ namespace kms_activate
             }
             InitializeComponent();
             windows_option.IsChecked = true;
+            ShowDebug.IsChecked = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             // when to exit
-            if ((string)button.Content == "Done! Click to exit")
+            if (button.Content.ToString() == "Done! Click to exit")
             {
                 Application.Current.Shutdown();
             }

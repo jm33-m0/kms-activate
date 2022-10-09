@@ -1,5 +1,3 @@
 @echo off
-echo Downloading Office, please wait...
-.\setup.exe /download .\office-proplus.xml
-echo Installing Office...
 .\setup.exe /configure .\office-proplus.xml
+@echo on

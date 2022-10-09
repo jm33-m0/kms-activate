@@ -2,6 +2,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 
 namespace kms_activate
@@ -11,6 +12,11 @@ namespace kms_activate
         public static MainWindow mainW = (MainWindow)Application.Current.MainWindow;
         public static void OfficeActivate()
         {
+            if (!OfficeEnv())
+            {
+                Application.Current.Shutdown();
+            }
+            MessageBox.Show("Make sure to open Office and agree to user terms", "Tips", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
 
             // debug info
             string kmsServerDbg, activateDbg;
@@ -244,7 +250,18 @@ namespace kms_activate
             MessageBox.Show("Converting Office " + version + " retail version to volume version...\n" + log, "Note: You are NOT using volume version", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        public static void OfficeEnv()
+        public static void InstallOffice()
+        {
+            if (!File.Exists("setup.exe") || !File.Exists("office-proplus.xml"))
+            {
+                MessageBox.Show("Make sure setup.exe and office-proplus.xml exist in current directory", "Files missing",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            Util.RunProcess("setup.exe", "/configure office-proplus.xml", "./", true);
+        }
+
+        public static bool OfficeEnv()
         {
 
             // look for Office's install path, where OSPP.VBS can be found
@@ -295,13 +312,20 @@ namespace kms_activate
                     MessageBox.Show("Only works with Office 2010 and/or above", "Unsupported version", MessageBoxButton.OK, MessageBoxImage.Error);
                     mainW.button.Content = "Unsupported version";
                     mainW.windows_option.IsChecked = true;
-                    return;
+                    return false;
                 }
                 mainW.OsppPath.Text = officepath;
+
+                return true;
             }
             catch (Exception err)
             {
-                MessageBox.Show(err.ToString(), "Error detecting Office path", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Office installation not detected:\n" + err.ToString(), "Error detecting Office path", MessageBoxButton.OK);
+                if (Util.YesNo("Download and install Office 2021 with Office Deployment Tool?", "Install Office"))
+                {
+                    InstallOffice();
+                }
+                return false;
             }
         }
     }
