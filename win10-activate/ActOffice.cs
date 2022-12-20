@@ -282,8 +282,19 @@ namespace kms_activate
                 RegistryKey officeBaseKey = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Office");
                 if (officeBaseKey.OpenSubKey(@"16.0", false) != null)
                 {
-                    officepath = officeBaseKey.OpenSubKey(@"16.0\Word\InstallRoot").GetValue("Path").ToString();
+                    var k = officeBaseKey.OpenSubKey(@"16.0\Word\InstallRoot");
+                    if (k == null)
+                    {
+                        throw new Exception("Office not installed");
+                    }
 
+                    var val = k.GetValue("Path");
+                    if (val == null)
+                    {
+                        throw new Exception("Office installation corrupted");
+                    }
+                    officeBaseKey.Close();
+                    officepath= val.ToString();
                     if (officepath.Contains("root"))
                     // Office 2019 can only be installed via Click-To-Run, therefore we get "C:\Program Files\Microsoft Office\root\Office16\",
                     // otherwise we get "C:\Program Files\Microsoft Office\Office16\"
@@ -300,11 +311,13 @@ namespace kms_activate
                 else if (officeBaseKey.OpenSubKey(@"15.0", false) != null)
                 {
                     officepath = officeBaseKey.OpenSubKey(@"15.0\Word\InstallRoot").GetValue("Path").ToString();
+                    officeBaseKey.Close();
                     mainW.button.Content += "Office 2013";
                 }
                 else if (officeBaseKey.OpenSubKey(@"14.0", false) != null)
                 {
                     officepath = officeBaseKey.OpenSubKey(@"14.0\Word\InstallRoot").GetValue("Path").ToString();
+                    officeBaseKey.Close();
                     mainW.button.Content += "Office 2010";
                 }
                 else
