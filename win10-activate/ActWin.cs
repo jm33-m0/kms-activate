@@ -15,6 +15,8 @@ namespace kms_activate
             // VOL keys
             Dictionary<string, string> winKeys = new Dictionary<string, string>()
             {
+                {"Windows 11 Professional", "W269N-WFGWX-YVC9B-4J6C9-T83GX" },
+                {"Windows 11 Enterprise", "NPPR9-FWDCX-D2C8J-H872K-2YT43" },
                 {"Windows 10 Professional", "W269N-WFGWX-YVC9B-4J6C9-T83GX" },
                 {"Windows 10 Enterprise", "NPPR9-FWDCX-D2C8J-H872K-2YT43" },
                 {"Windows 8.1 Professional", "GCRJD-8NW9H-F2CDX-CCM8D-9D6T9" },

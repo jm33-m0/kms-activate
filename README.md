@@ -14,7 +14,7 @@ Microsoft Windows/Office 一键激活工具
 
 ## supported products
 
-- [Windows 10 Professional/Enterprise](https://www.microsoft.com/en-us/software-download/windows10)
+- [Windows 11/10 Professional/Enterprise](https://www.microsoft.com/en-us/software-download/windows10)
 - [Windows Server ~~2008 R2~~ (EOL), 2012 R2, 2016, 2019, 2022 Standard/Datacenter](https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2019?filetype=ISO)
 - ~~Windows 7~~ (EOL), 8.1 Professional/Enterprise
 - [Office 2010, 2013, 2016, 2019, 2021](https://github.com/jm33-m0/kms-activate#office-deployment-tool)
