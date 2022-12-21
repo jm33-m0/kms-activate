@@ -16,8 +16,8 @@
 
 <Configuration>
 
-  <Add OfficeClientEdition="64" Channel="PerpetualVL2019">
-    <Product ID="ProPlus2019Volume">
+  <Add OfficeClientEdition="64" Channel="PerpetualVL2021">
+    <Product ID="ProPlus2021Volume">
       <Language ID="zh-cn" />
     </Product>
   </Add>
