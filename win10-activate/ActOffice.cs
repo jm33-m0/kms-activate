@@ -12,12 +12,6 @@ namespace kms_activate
         public static MainWindow mainW = (MainWindow)Application.Current.MainWindow;
         public static void OfficeActivate()
         {
-            if (!OfficeEnv())
-            {
-                Application.Current.Shutdown();
-            }
-            MessageBox.Show("Make sure to open Office and agree to user terms", "Tips", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK);
-
             // debug info
             string kmsServerDbg, activateDbg;
 
@@ -279,13 +273,18 @@ namespace kms_activate
                 }
 
                 string officepath = "";
+                mainW.OsppPath.Text = officepath;
                 RegistryKey officeBaseKey = localKey.OpenSubKey(@"SOFTWARE\Microsoft\Office");
+                if (officeBaseKey == null)
+                {
+                    throw new Exception("Office not installed");
+                }
                 if (officeBaseKey.OpenSubKey(@"16.0", false) != null)
                 {
                     var k = officeBaseKey.OpenSubKey(@"16.0\Word\InstallRoot");
                     if (k == null)
                     {
-                        throw new Exception("Office not installed");
+                        throw new Exception("Office not installed or corrupted");
                     }
 
                     var val = k.GetValue("Path");
@@ -294,14 +293,14 @@ namespace kms_activate
                         throw new Exception("Office installation corrupted");
                     }
                     officeBaseKey.Close();
-                    officepath= val.ToString();
+                    officepath = val.ToString();
                     if (officepath.Contains("root"))
                     // Office 2019 can only be installed via Click-To-Run, therefore we get "C:\Program Files\Microsoft Office\root\Office16\",
                     // otherwise we get "C:\Program Files\Microsoft Office\Office16\"
                     {
                         // OSPP.VBS is still in "C:\Program Files\Microsoft Office\Office16\"
                         officepath = officepath.Replace("root", "");
-                        mainW.button.Content += "Office 2019/2016";
+                        mainW.button.Content += "Office 2019/2021";
                     }
                     else
                     {
@@ -322,10 +321,7 @@ namespace kms_activate
                 }
                 else
                 {
-                    MessageBox.Show("Only works with Office 2010 and/or above", "Unsupported version", MessageBoxButton.OK, MessageBoxImage.Error);
-                    mainW.button.Content = "Unsupported version";
-                    mainW.windows_option.IsChecked = true;
-                    return false;
+                    throw new Exception("Only works with Office 2010 and/or above");
                 }
                 mainW.OsppPath.Text = officepath;
 
